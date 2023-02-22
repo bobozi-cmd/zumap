@@ -46,7 +46,7 @@ find_package(Threads REQUIRED)
 add_library(umap SHARED ${umapsrc} )
 add_library(umap-static STATIC ${umapsrc} )
 set_target_properties(umap-static PROPERTIES OUTPUT_NAME umap)
-target_link_libraries (umap ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries (umap ${CMAKE_THREAD_LIBS_INIT} -lz)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 

@@ -9,6 +9,7 @@
 #include <errno.h>              // strerror()
 #include <string.h>             // strerror()
 #include <sys/mman.h>
+#include <zlib.h>
 
 #include "umap/config.h"
 
@@ -34,6 +35,8 @@ umap(
       << ", flags: " << flags
       << ", offset: " << offset
   );
+  printf("[-]zlib ver is %s\n", zlib_version);
+
   return Umap::umap_ex(region_addr, region_size, prot, flags, fd, 0, nullptr);
 }
 
