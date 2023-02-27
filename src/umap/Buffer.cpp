@@ -234,7 +234,7 @@ void *FetchFunc(void *arg)
     UMAP_ERROR("Failed to allocate copyin_buf");
   
   for(uint64_t offset = offset_st; offset < offset_end; offset+=psize){
-    
+    printf("[----] FetchFunc\n");
     if( rd->store()->read_from_store(copyin_buf, psize, offset) == -1)
       UMAP_ERROR("failed to read_from_store at offset="<<offset);
   
@@ -359,7 +359,9 @@ void Buffer::process_page_event(char* paddr, bool iswrite, RegionDescriptor* rd)
 
   lock();
   auto pd = page_already_present(paddr);
-
+  // printf("[-] you trigger a PF at %p\n", paddr);
+  // 申请了N个pages，并监控了pages的虚拟地址空间，但是没有为每个page提前生成pd
+  // 当PF发生时，如果当前的page没有对应的pd，就生成新的pd记录该page，不让就直接返回其对应的pd
   if ( pd != nullptr ) {  // Page is already present
     if (iswrite && pd->dirty == false) {
       work.page_desc = pd;
@@ -368,7 +370,7 @@ void Buffer::process_page_event(char* paddr, bool iswrite, RegionDescriptor* rd)
       UMAP_LOG(Debug, "PRE: " << pd << " From: " << this);
     }
     else {
-      static int hiwat = 0;
+      static int hiwat = 0; // high water
 
       pd->spurious_count++;
       if (pd->spurious_count > hiwat) {
@@ -395,12 +397,18 @@ void Buffer::process_page_event(char* paddr, bool iswrite, RegionDescriptor* rd)
     UMAP_LOG(Debug, "NEW: " << pd << " From: " << this);
   }
 
+  // TODO:
+  // Pd的几个状态的含义是什么
+  // if (m_busy_pages.size() > m_evict_high_water -
+  // umapcfg_get_umap_page_size())
+  //   printf("[-] m_busy_pages.size() = %ld, m_evict_high_water = %ld\n",
+  //          m_busy_pages.size(), m_evict_high_water);
   m_rm.get_fill_workers_h()->send_work(work);
 
   //
   // Kick the eviction daemon if the high water mark has been reached
   //
-  if ( m_busy_pages.size() == m_evict_high_water ) {
+  if (m_busy_pages.size() == m_evict_high_water) {
     WorkItem w;
 
     w.type = Umap::WorkItem::WorkType::THRESHOLD;

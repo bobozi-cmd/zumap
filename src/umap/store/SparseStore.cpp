@@ -105,6 +105,9 @@ namespace Umap {
     ssize_t SparseStore::read_from_store(char* buf, size_t nb, off_t off) {
       ssize_t read = 0;
       off_t file_offset;
+
+      printf("[+] This is SparseStore!\n");
+
       int fd = get_fd(off, file_offset); 
       read = pread(fd,buf,nb,file_offset);
       if(read == -1){

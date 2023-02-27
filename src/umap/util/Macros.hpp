@@ -54,4 +54,15 @@
                                  __LINE__);                      \
 }
 
+static inline size_t uzs_round_up(size_t num_to_round, size_t multiple) {
+  if (multiple == 0)
+    return num_to_round;
+
+  int remainder = num_to_round % multiple;
+  if (remainder == 0)
+    return num_to_round;
+
+  return (num_to_round + multiple - remainder);
+}
+
 #endif // UMAP_Macros_HPP

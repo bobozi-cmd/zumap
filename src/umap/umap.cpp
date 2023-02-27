@@ -204,7 +204,7 @@ umap_ex(
   umap_region = (void*)((uint64_t)mmap_region + umap_psize - 1);
   umap_region = (void*)((uint64_t)umap_region & ~(umap_psize - 1));
 
-  if ( store == nullptr )
+  if (store == nullptr)
     store = Store::make_store(umap_region, umap_size, umap_psize, fd);
 
   rm.addRegion(store, (char*)umap_region, umap_size, (char*)mmap_region, mmap_size);

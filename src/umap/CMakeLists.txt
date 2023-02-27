@@ -43,6 +43,7 @@ set(umapsrc
     ${umapheaders})
 
 find_package(Threads REQUIRED)
+find_package(ZLIB REQUIRED)
 add_library(umap SHARED ${umapsrc} )
 add_library(umap-static STATIC ${umapsrc} )
 set_target_properties(umap-static PROPERTIES OUTPUT_NAME umap)

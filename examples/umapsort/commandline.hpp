@@ -48,8 +48,8 @@ typedef struct {
 } umt_optstruct_t;
 
 static char const* DIRNAME = "/mnt/intel/";
-static char const* FILENAME = "abc";
-const uint64_t NUMPAGES = 10000000;
+static char const *FILENAME = "/mnt/ssd/sort_perf_data";
+const uint64_t NUMPAGES = 4096;
 const uint64_t NUMTHREADS = 2;
 const uint64_t BUFFERSIZE = 16;
 const int64_t NUMFILES = 1;

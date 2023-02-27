@@ -133,6 +133,7 @@ RegionManager::RegionManager()
 
   unsigned int nthreads = std::thread::hardware_concurrency();
   nthreads = (nthreads == 0) ? 16 : nthreads;
+  // nthreads = 1; // single thread
 
   if ( (read_env_var("UMAP_PAGE_FILLERS", &env_value)) != nullptr )
     set_num_fillers(env_value);
@@ -147,12 +148,12 @@ RegionManager::RegionManager()
   if ( (read_env_var("UMAP_EVICT_HIGH_WATER_THRESHOLD", &env_value)) != nullptr )
     set_evict_high_water_threshold(env_value);
   else
-    set_evict_high_water_threshold(90);
+    set_evict_high_water_threshold(30);
 
   if ( (read_env_var("UMAP_EVICT_LOW_WATER_THRESHOLD", &env_value)) != nullptr )
     set_evict_low_water_threshold(env_value);
   else
-    set_evict_low_water_threshold(70);
+    set_evict_low_water_threshold(10);
 
   if ( (read_env_var("UMAP_PAGESIZE", &env_value)) != nullptr )
     set_umap_page_size(env_value);

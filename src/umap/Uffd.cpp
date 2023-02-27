@@ -127,6 +127,8 @@ Uffd::process_page( bool iswrite, char* addr )
 {
   auto rd = m_rm.containing_region(addr);
 
+  // printf("[-] PF at %p\n", addr);
+
   if ( rd != nullptr )
     m_buffer->process_page_event(addr, iswrite, rd);
 }

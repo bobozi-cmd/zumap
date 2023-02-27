@@ -43,34 +43,6 @@ function disable_swap {
   swapoff -av
 }
 
-function setuptmpfs {
-  if [ ! -d /mnt/tmpfs ]; then
-    mkdir -p /mnt/tmpfs
-  fi
-
-  # Unmount / Reset of already mounted
-  fs=`stat -f -c '%T' /mnt/tmpfs`
-
-  if [ "$fs" = "tmpfs" ]; then
-    echo "Resetting tmpfs"
-    umount /mnt/tmpfs
-  fi
-
-  fs=`stat -f -c '%T' /mnt/tmpfs`
-  if [ "$fs" != "tmpfs" ]; then
-    if [ ! -d /mnt/tmpfs ]; then
-      mkdir -p /mnt/tmpfs
-    fi
-    chmod go+rwx /mnt/tmpfs
-    mount -t tmpfs -o size=600g tmpfs /mnt/tmpfs
-    fs=`stat -f -c '%T' /mnt/tmpfs`
-    echo "/mnt/tmpfs mounted as: $fs"
-  else
-    echo "Unable to reset /mnt/tmpfs, exiting"
-    exit 1
-  fi
-}
-
 export LD_LIBRARY_PATH=$UMAP_INSTALL_PATH/lib:$LD_LIBRARY_PATH
 
 echo "##############################################"
@@ -81,21 +53,30 @@ SSD_MNT_PATH="/mnt/ssd"
 
 set_readahead
 disable_swap
-setuptmpfs
 
 # umap
 echo "-----------------------------umap----------------------"
-for t in 16 8 4; do
-    for umap_psize in 65536 16384 4096;do
-	rm -f ${SSD_MNT_PATH}/sort_perf_data
-	drop_page_cache
-	free_mem
-	cmd="env UMAP_PAGESIZE=$umap_psize ./umapsort -f ${SSD_MNT_PATH}/sort_perf_data -p $(((512*1024*1024)/umap_psize)) -N 1 -t $t"
-	date
-	echo $cmd
-	time sh -c "$cmd"
-    done
+for umap_psize in 65536 16384 4096;do
+  rm -f ${SSD_MNT_PATH}/sort_perf_data
+  drop_page_cache
+  free_mem
+  cmd="env UMAP_PAGESIZE=$umap_psize ./umapsort -f ${SSD_MNT_PATH}/sort_perf_data -p $(((512*1024*1024)/umap_psize)) -N 1 -t 1"
+  date
+  echo $cmd
+  time sh -c "$cmd" 
 done
+
+# for t in 16 8 4; do
+#     for umap_psize in 65536 16384 4096;do
+# 	rm -f ${SSD_MNT_PATH}/sort_perf_data
+# 	drop_page_cache
+# 	free_mem
+# 	cmd="env UMAP_PAGESIZE=$umap_psize ./umapsort -f ${SSD_MNT_PATH}/sort_perf_data -p $(((512*1024*1024)/umap_psize)) -N 1 -t $t"
+# 	date
+# 	echo $cmd
+# 	time sh -c "$cmd"
+#     done
+# done
 
 # mmap
 echo "-----------------------------mmap----------------------"

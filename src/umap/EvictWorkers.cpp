@@ -7,6 +7,8 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <unistd.h>
+#include <zlib.h>
 
 #include "umap/Buffer.hpp"
 #include "umap/EvictWorkers.hpp"
@@ -19,6 +21,7 @@ namespace Umap {
 void EvictWorkers::EvictWorker( void )
 {
   uint64_t page_size = RegionManager::getInstance().get_umap_page_size();
+  size_t sys_page_size = sysconf(_SC_PAGE_SIZE);
 
   while ( 1 ) {
     auto w = get_work();
@@ -35,10 +38,9 @@ void EvictWorkers::EvictWorker( void )
       auto offset = pd->region->store_offset(pd->page);
 
       m_uffd->enable_write_protect(pd->page);
-
       if (store->write_to_store(pd->page, page_size, offset) == -1)
-        UMAP_ERROR("write_to_store failed: "
-            << errno << " (" << strerror(errno) << ")");
+        UMAP_ERROR("write_to_store failed: " << errno << " (" << strerror(errno)
+                                             << ")");
 
       pd->dirty = false;
     }

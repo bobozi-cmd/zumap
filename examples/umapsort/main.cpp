@@ -171,25 +171,29 @@ int main(int argc, char **argv)
 
     if (sort_ascending == true) {
       printf("Sorting in Ascending Order\n");
-      __gnu_parallel::sort(arr, &arr[arraysize], std::less<uint64_t>(), __gnu_parallel::quicksort_tag());
+      __gnu_parallel::sort(arr, &arr[arraysize], std::less<uint64_t>(),
+                           __gnu_parallel::quicksort_tag());
     }
     else {
       printf("Sorting in Descending Order\n");
-      __gnu_parallel::sort(arr, &arr[arraysize], std::greater<uint64_t>(), __gnu_parallel::quicksort_tag());
+      __gnu_parallel::sort(arr, &arr[arraysize], std::greater<uint64_t>(),
+                           __gnu_parallel::quicksort_tag());
     }
 
     fprintf(stderr, "Sort took %f seconds\n", utility::elapsed_time_sec(start));
 
     start = utility::elapsed_time_sec();
     validatedata(arr, arraysize);
-    fprintf(stderr, "Validate took %f seconds\n", utility::elapsed_time_sec(start));
+    fprintf(stderr, "Validate took %f seconds\n",
+            utility::elapsed_time_sec(start));
   }
 
   start = utility::elapsed_time_sec();
 
   if (options.numfiles > 1) {
     for ( int i = 0; i < options.numfiles; ++i) {
-      std::cout << "Unmapping " << mapsize[i] << " bytes from " << mappings[i] << std::endl;
+      std::cout << "Unmapping " << mapsize[i] << " bytes from " << mappings[i]
+                << std::endl;
       utility::unmap_file(options.usemmap, mapsize[i], mappings[i]);
     }
   }

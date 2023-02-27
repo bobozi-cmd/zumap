@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <string.h>             // strerror()
 #include <unistd.h>
+#include <zlib.h>
 
 #include "umap/Buffer.hpp"
 #include "umap/FillWorkers.hpp"
@@ -49,7 +50,9 @@ namespace Umap {
       else {
         uint64_t offset = w.page_desc->region->store_offset(w.page_desc->page);
 
-        if (w.page_desc->region->store()->read_from_store(copyin_buf, page_size, offset) == -1)
+        // printf("[-] Read data from fd\n");
+        if (w.page_desc->region->store()->read_from_store(copyin_buf, page_size,
+                                                          offset) == -1)
           UMAP_ERROR("read_from_store failed");
 
         if ( ! w.page_desc->dirty ) {

@@ -70,8 +70,8 @@ namespace Umap {
       }
 
       void start_thread_pool() {
-        UMAP_LOG(Debug, "Starting " <<  m_pool_name << " Pool of "
-            << m_num_threads << " threads");
+        UMAP_LOG(Info, "Starting " << m_pool_name << " Pool of "
+                                   << m_num_threads << " threads");
 
         for ( uint64_t i = 0; i < m_num_threads; ++i) {
           pthread_t t;
